@@ -73,7 +73,7 @@ public class CreateActivity extends AppCompatActivity {
                 if(!question.isEmpty()){
                     Log.d("create", "nem kell empty");
 
-                    myRef.child(("session")).child(sessionId).child("Qestion").setValue(question);
+                    myRef.child("session").child(sessionId).child("Qestion").setValue(question);
 
                    // myRef.child(String.valueOf(maxID+1)).child("session").child(sessionId).child("Question").setValue(question);
 
