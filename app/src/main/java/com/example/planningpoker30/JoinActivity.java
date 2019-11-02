@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
 public class JoinActivity extends AppCompatActivity {
@@ -57,9 +59,42 @@ public class JoinActivity extends AppCompatActivity {
                 setSessionid(editSessID.getText().toString().trim());
                 setUsernamesesion(editUsername.getText().toString().trim());
 
-                MyTask myTask= new MyTask();
-                //start asynctask
-                myTask.execute(1000);
+                new Thread(new Runnable(){
+                    public void run() {
+                        // a potentially time consuming task
+                        Log.d("create", "Users");
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+                        Log.d("create", "Users ID:"+getSessionid());
+                        DatabaseReference  myRef = database.getReference().child("session").child(getSessionid()).child("Users");
+
+                        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.getKey()!=null) {
+                                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
+                                        String classnames = datas.getKey();
+                                        Users.add(classnames);
+                                        Log.d("create", "Users " + classnames);
+                                    }
+                                    Log.d("create", "Null");
+                                }
+
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }).start();
+               final Timer timer = new Timer();
+                timer.schedule(new TimerTask(){
+                    public void run() {
+                        // time ran out.
+                        timer.cancel();
+                    }
+                }, 5000);
 
                 Log.d("create", "kell join:"+editSessID.getText().toString().trim());
                 if(isCompletdata())
@@ -221,26 +256,6 @@ public class JoinActivity extends AppCompatActivity {
 
     }
 
-    private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
-        protected Long doInBackground(URL... urls) {
-            int count = urls.length;
-            long totalSize = 0;
-            for (int i = 0; i < count; i++) {
-                totalSize += Downloader.downloadFile(urls[i]);
-                publishProgress((int) ((i / (float) count) * 100));
-                // Escape early if cancel() is called
-                if (isCancelled()) break;
-            }
-            return totalSize;
-        }
 
-        protected void onProgressUpdate(Integer... progress) {
-            setProgressPercent(progress[0]);
-        }
-
-        protected void onPostExecute(Long result) {
-            showDialog("Downloaded " + result + " bytes");
-        }
-    }
 
 }
