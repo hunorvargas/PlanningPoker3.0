@@ -21,6 +21,10 @@
         <activity android:name=".JoinActivity" />
         <activity android:name=".RoomActivity" />
         <activity android:name=".StatisticsActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

@@ -20,7 +20,7 @@ import static java.lang.Integer.parseInt;
 
 public class CreateActivity extends AppCompatActivity {
 
-    EditText editTextQuestionId, editTextQuestion;
+    EditText editTextQuestionId, editTextQuestion,editTextQuestionDesc;
     Button creatSessionButton;
     long maxID=0;
 
@@ -44,6 +44,8 @@ public class CreateActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String question = editTextQuestion.getText().toString().trim();
                 String sessionId = editTextQuestionId.getText().toString().trim();
+                String questionDescrpt=editTextQuestionDesc.getText().toString().trim();
+
                 Log.d("create1", question + " " + sessionId);
 
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -55,13 +57,14 @@ public class CreateActivity extends AppCompatActivity {
 
                     Log.d("create1", "nem kell empty");
 
-                    myRef.child("session").child(sessionId).child("Qestion").setValue(question);
-
+                    myRef.child("session").child(sessionId).child("Questions").child("Question").setValue(question);
+                    myRef.child("session").child(sessionId).child("Questions").child("QuestionDesc").setValue(questionDescrpt);
 
                     Log.d("create1", "nem kell data added");
-                    //startActivity(new Intent(CreateActivity.this, RoomActivity.class ));
+                    startActivity(new Intent(CreateActivity.this, MainActivity.class ));
                 }
                 else Log.d("create1", "nem kell else");
+
 
             }
 
@@ -74,6 +77,7 @@ public class CreateActivity extends AppCompatActivity {
         editTextQuestionId = findViewById(R.id.editQuestionId);
         creatSessionButton =  findViewById(R.id.btnC);
         editTextQuestion = findViewById(R.id.editTextQuestion);
+        editTextQuestionDesc=findViewById(R.id.questionDescripEditText);
     }
 
     public long getMaxID() {

@@ -19,9 +19,10 @@ import com.google.firebase.database.ValueEventListener;
 public class RoomActivity extends AppCompatActivity {
 
 
-    TextView questiontextView;
-    Button voteButton1,voteButton2,voteButton3,voteButton4,voteButton5;
+    TextView questiontextView,questionDescTextView;
+    Button voteButton1,voteButton2,voteButton3,voteButton4,voteButton5,novoteButton;
     private User newUser;
+    private Question question;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,87 @@ public class RoomActivity extends AppCompatActivity {
 
         init();
         addUserDatabase();
+        addVote();
+    }
+
+    private void addVote() {
+        Log.d("create", "adduser");
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        Log.d("create", "nem kell Onclick");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                long currentSessionID=dataSnapshot.getChildrenCount();
+               // newUser.setSessionId(Long.toString(currentSessionID));
+                Log.d("create", "kell:"+newUser.getSessionId());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("create", "kell error");
+            }
+        });
+
+        vote();
+
+
+        Log.d("create", "nem kell data added");
+        //startActivity(new Intent(CreateActivity.this, RoomActivity.class ));
+
+    }
+
+    private void vote() {
+
+        voteButton1.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("1");
+                startActivity(new Intent(RoomActivity.this, MainActivity.class ));
+            }
+        });
+        voteButton2.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("2");
+                startActivity(new Intent(RoomActivity.this, MainActivity.class ));
+            }
+        });
+        voteButton3.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("3");
+                startActivity(new Intent(RoomActivity.this, MainActivity.class ));
+            }
+        });
+        voteButton4.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("4");
+                startActivity(new Intent(RoomActivity.this, MainActivity.class ));
+            }
+        });
+        voteButton5.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("5");
+                startActivity(new Intent(RoomActivity.this, MainActivity.class ));
+            }
+        });
+
     }
 
     private void addUserDatabase() {
@@ -45,8 +127,7 @@ public class RoomActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     long currentSessionID=dataSnapshot.getChildrenCount();
-                    newUser.setSessionId(Long.toString(currentSessionID));
-                    Log.d("create", "kell:"+newUser.getSessionId());
+                    Log.d("create", "kell curent:"+newUser.getSessionId());
                 }
 
                 @Override
@@ -55,29 +136,86 @@ public class RoomActivity extends AppCompatActivity {
                 }
             });
 
-            myRef.child("session").child(newUser.getSessionId()).child("Users").setValue(newUser.getUserName());
-
+            myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue(" ");
+            novoteed();
 
             Log.d("create", "nem kell data added");
-            //startActivity(new Intent(CreateActivity.this, RoomActivity.class ));
     }
 
+    private void novoteed() {
+        novoteButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("No Voted");
+                startActivity(new Intent(RoomActivity.this, MainActivity.class ));
+            }
+        });
+    }
 
 
     private void init() {
 
         questiontextView=findViewById(R.id.textViewQuestion);
+        questionDescTextView=findViewById(R.id.questionDescpTextView);
         voteButton1 = findViewById(R.id.buttonVote1);
         voteButton2 = findViewById(R.id.buttonVote2);
         voteButton3 = findViewById(R.id.buttonVote3);
         voteButton4 = findViewById(R.id.buttonVote4);
         voteButton5 = findViewById(R.id.buttonVote5);
+        novoteButton=findViewById(R.id.novoteButton);
 
         newUser=new User();
+        question=new Question();
         Intent intent= getIntent();
 
         newUser.setUserName(intent.getStringExtra("Username"));
+        Log.d("create", "kell Room:"+newUser.getUserName());
         newUser.setSessionId(intent.getStringExtra("SessionId"));
+        Log.d("create", "kell Room:"+newUser.getSessionId());
+
+        showQuestion();
+        showQuestionDescrp();
+    }
+
+    private void showQuestionDescrp() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("session").child(newUser.getSessionId()).child("Questions").child("QuestionDesc");
+
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                question.setQuestionDesc(dataSnapshot.getValue().toString());
+                questionDescTextView.setText(question.getQuestionDesc());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void showQuestion() {
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("session").child(newUser.getSessionId()).child("Questions").child("Question");
+
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                question.setQuestion(dataSnapshot.getValue().toString());
+                questiontextView.setText(question.getQuestion());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

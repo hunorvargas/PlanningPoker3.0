@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ public class JoinActivity extends AppCompatActivity {
                 Intent intent = new Intent(JoinActivity.this,RoomActivity.class);
                 intent.putExtra("Username",editUsername.getText().toString().trim());
                 intent.putExtra("SessionId",editSessID.getText().toString().trim());
+                Log.d("create", "kell join:"+editSessID.getText().toString().trim());
                 startActivity(intent);
 
             }
