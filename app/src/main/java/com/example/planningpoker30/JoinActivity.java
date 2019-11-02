@@ -21,15 +21,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 public class JoinActivity extends AppCompatActivity {
     EditText editUsername,editSessID;
     Button btnJoin;
+    private String sessionid="";
+    final ArrayList<String> sessionIDs = new ArrayList<>();
+    final ArrayList<String> Users = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
-
         init();
         joinSession();
     }
@@ -43,6 +46,8 @@ public class JoinActivity extends AppCompatActivity {
                 Intent intent = new Intent(JoinActivity.this,RoomActivity.class);
                 intent.putExtra("Username",editUsername.getText().toString().trim());
                 intent.putExtra("SessionId",editSessID.getText().toString().trim());
+                setSessionid(editSessID.getText().toString().trim());
+                getsessionUsernames();
                 Log.d("create", "kell join:"+editSessID.getText().toString().trim());
                 if(isCompletdata())
                 startActivity(intent);
@@ -58,6 +63,7 @@ public class JoinActivity extends AppCompatActivity {
         editUsername = findViewById(R.id.editUsername);
         editSessID =  findViewById(R.id.editSessID);
         btnJoin = findViewById(R.id.btnJoin);
+        getsessionids();
 
     }
 
@@ -80,10 +86,35 @@ public class JoinActivity extends AppCompatActivity {
    }
 
     private boolean isagoodSessionID() {
+
         Log.d("create", "kell isagoodsession");
-        final ArrayList<String> sessionIDs = new ArrayList<>();
+
+        int i = 0;
+        while (i < sessionIDs.size()) {
+            Log.d("create", "Whiile ID"+sessionIDs.get(i));
+            if(sessionIDs.get(i).equals(getSessionid())){
+                Log.d("create", "kell session egyenlo");
+                return true;
+            }
+            i++;
+        }
+        Toast.makeText(JoinActivity.this,"This Session is not available!", Toast.LENGTH_LONG).show();
+        Log.d("create", "kell session nincs");
+        return false;
+    }
+
+    public String getSessionid() {
+        return sessionid;
+    }
+
+    public void setSessionid(String sessionid) {
+        this.sessionid = sessionid;
+    }
+
+    public void getsessionids(){
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference  myRef = database.getReference("session");
+        DatabaseReference  myRef = database.getReference();
 
         myRef.addChildEventListener((new ChildEventListener() {
             @Override
@@ -119,17 +150,56 @@ public class JoinActivity extends AppCompatActivity {
 
             }
         }));
-
-
-
-        for (String id : sessionIDs) {
-             if(id.equals(editSessID.getText().toString().trim())){
-                 Log.d("create", "kell session egyenlo");
-                 return true;
-             }
-        }
-        Toast.makeText(JoinActivity.this,"This Session is not available!", Toast.LENGTH_LONG).show();
-        Log.d("create", "kell session nincs");
-        return false;
     }
+    public void getsessionUsernames(){
+        Log.d("create", "Users");
+        final CountDownLatch done = new CountDownLatch(1);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        Log.d("create", "Users ID:"+getSessionid());
+        DatabaseReference  myRef = database.getReference().child("session").child(getSessionid());
+
+        myRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("create", "UsersSnap");
+                for (DataSnapshot child: dataSnapshot.getChildren())
+                {
+                    String key = child.getKey().toString();
+                    Users.add(key);
+                    Log.d("create", "Users:"+ key);
+                    done.countDown();
+                }
+               // done.countDown();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        try {
+            done.await();
+            Log.d("create", "Wait");//it will wait till the response is received from firebase.
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.d("create", "Wait done");
+    }
+
 }

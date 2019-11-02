@@ -65,11 +65,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editQuestionId"
+        app:layout_constraintTop_toBottomOf="@+id/editSessionID"
         app:layout_constraintVertical_bias="0.818" />
 
     <EditText
-        android:id="@+id/editQuestionId"
+        android:id="@+id/editSessionID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
