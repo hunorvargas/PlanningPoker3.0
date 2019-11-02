@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -27,8 +30,13 @@ public class JoinActivity extends AppCompatActivity {
     EditText editUsername,editSessID;
     Button btnJoin;
     private String sessionid="";
+    private String usernamesesion="";
+    public int counter;
     final ArrayList<String> sessionIDs = new ArrayList<>();
     final ArrayList<String> Users = new ArrayList<>();
+    ProgressBar p;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +55,12 @@ public class JoinActivity extends AppCompatActivity {
                 intent.putExtra("Username",editUsername.getText().toString().trim());
                 intent.putExtra("SessionId",editSessID.getText().toString().trim());
                 setSessionid(editSessID.getText().toString().trim());
-                getsessionUsernames();
+                setUsernamesesion(editUsername.getText().toString().trim());
+
+                MyTask myTask= new MyTask();
+                //start asynctask
+                myTask.execute(1000);
+
                 Log.d("create", "kell join:"+editSessID.getText().toString().trim());
                 if(isCompletdata())
                 startActivity(intent);
@@ -76,14 +89,34 @@ public class JoinActivity extends AppCompatActivity {
        }
        else {
            if(isagoodSessionID()) {
-               Log.d("create", "kell iscompletdata");
-               return true;
+               Log.d("create", "kell sessionID jo");
+               if(isagoodusername()){
+                   Log.d("create", "kell username jo");
+                   return true;
+               }
            }
         return false;
        }
        Log.d("create", "kell nem komplett isagoodsession");
        return true;
    }
+
+    private boolean isagoodusername() {
+        Log.d("create", "kell isagoodusername");
+
+        int i = 0;
+        while (i < Users.size()) {
+            Log.d("create", "Whiile ID"+Users.get(i));
+            if(Users.get(i).equals(getUsernamesesion())){
+                Log.d("create", "kell username egyenlo");
+                return true;
+            }
+            i++;
+        }
+        Toast.makeText(JoinActivity.this,"This UserName is busy!", Toast.LENGTH_LONG).show();
+        Log.d("create", "kell foglalt username");
+        return false;
+    }
 
     private boolean isagoodSessionID() {
 
@@ -111,11 +144,19 @@ public class JoinActivity extends AppCompatActivity {
         this.sessionid = sessionid;
     }
 
+    public String getUsernamesesion() {
+        return usernamesesion;
+    }
+
+    public void setUsernamesesion(String usernamesesion) {
+        this.usernamesesion = usernamesesion;
+    }
+
     public void getsessionids(){
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference  myRef = database.getReference();
-
+        final CountDownLatch done = new CountDownLatch(1);
         myRef.addChildEventListener((new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -128,6 +169,7 @@ public class JoinActivity extends AppCompatActivity {
                     sessionIDs.add(key);
                     Log.d("create", "ID:"+ key);
                 }
+
             }
 
             @Override
@@ -153,53 +195,52 @@ public class JoinActivity extends AppCompatActivity {
     }
     public void getsessionUsernames(){
         Log.d("create", "Users");
-        final CountDownLatch done = new CountDownLatch(1);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         Log.d("create", "Users ID:"+getSessionid());
-        DatabaseReference  myRef = database.getReference().child("session").child(getSessionid());
+        DatabaseReference  myRef = database.getReference().child("session").child(getSessionid()).child("Users");
 
-        myRef.addChildEventListener(new ChildEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("create", "UsersSnap");
-                for (DataSnapshot child: dataSnapshot.getChildren())
-                {
-                    String key = child.getKey().toString();
-                    Users.add(key);
-                    Log.d("create", "Users:"+ key);
-                    done.countDown();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getKey()!=null) {
+                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
+                        String classnames = datas.getKey();
+                        Users.add(classnames);
+                        Log.d("create", "Users " + classnames);
+                    }
+                    Log.d("create", "Null");
                 }
-               // done.countDown();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             }
-
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-        try {
-            done.await();
-            Log.d("create", "Wait");//it will wait till the response is received from firebase.
-        } catch(InterruptedException e) {
-            e.printStackTrace();
+
+    }
+
+    private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+        protected Long doInBackground(URL... urls) {
+            int count = urls.length;
+            long totalSize = 0;
+            for (int i = 0; i < count; i++) {
+                totalSize += Downloader.downloadFile(urls[i]);
+                publishProgress((int) ((i / (float) count) * 100));
+                // Escape early if cancel() is called
+                if (isCancelled()) break;
+            }
+            return totalSize;
         }
-        Log.d("create", "Wait done");
+
+        protected void onProgressUpdate(Integer... progress) {
+            setProgressPercent(progress[0]);
+        }
+
+        protected void onPostExecute(Long result) {
+            showDialog("Downloaded " + result + " bytes");
+        }
     }
 
 }

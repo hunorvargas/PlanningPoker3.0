@@ -41,15 +41,14 @@
         android:id="@+id/textView11"
         android:layout_width="137dp"
         android:layout_height="30dp"
-        android:layout_marginTop="44dp"
         android:text="Session ID"
         android:textColor="@color/colorPrimary"
         android:textSize="24dp"
         android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editSessionID"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.142"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/questionDescripEditText" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnC"
@@ -66,7 +65,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editSessionID"
-        app:layout_constraintVertical_bias="0.818" />
+        app:layout_constraintVertical_bias="0.8" />
 
     <EditText
         android:id="@+id/editSessionID"
