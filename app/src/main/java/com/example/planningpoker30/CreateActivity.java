@@ -27,6 +27,7 @@ public class CreateActivity extends AppCompatActivity {
     EditText editTexteditSessionID, editTextQuestion,editTextQuestionDesc;
     Button creatSessionButton;
     long maxID=0;
+    private String sessionid="";
     final ArrayList<String> sessionIDs = new ArrayList<>();
 
     @Override
@@ -50,7 +51,7 @@ public class CreateActivity extends AppCompatActivity {
                 String question = editTextQuestion.getText().toString().trim();
                 String sessionId = editTexteditSessionID.getText().toString().trim();
                 String questionDescrpt=editTextQuestionDesc.getText().toString().trim();
-
+                setSessionid(editTexteditSessionID.getText().toString().trim());
                 Log.d("create1", question + " " + sessionId);
 
 
@@ -62,13 +63,14 @@ public class CreateActivity extends AppCompatActivity {
                 if(!question.isEmpty()){
 
                     Log.d("create1", "nem kell empty");
-
+                    if(isagoodSessionID()) {
                     myRef.child("session").child(sessionId).child("Questions").child("Question").setValue(question);
                     myRef.child("session").child(sessionId).child("Questions").child("QuestionDesc").setValue(questionDescrpt);
 
                     Log.d("create1", "nem kell data added");
                     Toast.makeText(CreateActivity.this, "SessionCreated", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(CreateActivity.this, MainActivity.class ));
+                }
                 }
                 else {
                     Log.d("create1", "nem kell else");
@@ -79,6 +81,23 @@ public class CreateActivity extends AppCompatActivity {
 
 
         });
+    }
+
+    private boolean isagoodSessionID() {
+        Log.d("create", "kell isagoodsession");
+
+        int i = 0;
+        while (i < sessionIDs.size()) {
+            Log.d("create", "Whiile ID"+sessionIDs.get(i));
+            if(sessionIDs.get(i).equals(getSessionid())){
+                Toast.makeText(CreateActivity.this,"This SessionID is busy!", Toast.LENGTH_LONG).show();
+                return false;
+            }
+            i++;
+        }
+       // Toast.makeText(CreateActivity.this,"This SessionID is busy!", Toast.LENGTH_LONG).show();
+        Log.d("create", "kell session nincs");
+        return true;
     }
 
 
@@ -137,6 +156,14 @@ public class CreateActivity extends AppCompatActivity {
         }
     }));
 }
+
+    public String getSessionid() {
+        return sessionid;
+    }
+
+    public void setSessionid(String sessionid) {
+        this.sessionid = sessionid;
+    }
 }
 
 
