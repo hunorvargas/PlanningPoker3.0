@@ -31,25 +31,6 @@ public class CreateActivity extends AppCompatActivity {
 
         init();
 
-        /*myRef.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("create", "nem snap");
-                if(dataSnapshot.exists()){
-                    maxID=(dataSnapshot.getChildrenCount());
-                    Log.d("create", "nem k" + maxID);
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-*/
         creatSession();
 
         Log.d("create", "nem kell main");
@@ -63,27 +44,24 @@ public class CreateActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String question = editTextQuestion.getText().toString().trim();
                 String sessionId = editTextQuestionId.getText().toString().trim();
-                Log.d("create", question + " " + sessionId);
+                Log.d("create1", question + " " + sessionId);
 
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
 
-                Log.d("create", "nem kell Onclick");
+                Log.d("create1", "nem kell Onclick");
 
                 if(!question.isEmpty()){
-                    Log.d("create", "nem kell empty");
+
+                    Log.d("create1", "nem kell empty");
 
                     myRef.child("session").child(sessionId).child("Qestion").setValue(question);
 
-                   // myRef.child(String.valueOf(maxID+1)).child("session").child(sessionId).child("Question").setValue(question);
 
-                  // myRef.child("session").child(sessionId).child("Question").setValue(question);
-
-
-                    Log.d("create", "nem kell data added");
+                    Log.d("create1", "nem kell data added");
                     //startActivity(new Intent(CreateActivity.this, RoomActivity.class ));
                 }
-                else Log.d("create", "nem kell else");
+                else Log.d("create1", "nem kell else");
 
             }
 

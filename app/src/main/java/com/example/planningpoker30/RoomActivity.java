@@ -55,8 +55,6 @@ public class RoomActivity extends AppCompatActivity {
                 }
             });
 
-           //  myRef.child(String.valueOf(++(newUser.getSessionId()))).setValue(sessionId);
-
             myRef.child("session").child(newUser.getSessionId()).child("Users").setValue(newUser.getUserName());
 
 
