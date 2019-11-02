@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,6 +49,7 @@ public class CreateActivity extends AppCompatActivity {
 
                 Log.d("create1", question + " " + sessionId);
 
+
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
 
@@ -61,11 +63,14 @@ public class CreateActivity extends AppCompatActivity {
                     myRef.child("session").child(sessionId).child("Questions").child("QuestionDesc").setValue(questionDescrpt);
 
                     Log.d("create1", "nem kell data added");
+                    Toast.makeText(CreateActivity.this, "SessionCreated", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(CreateActivity.this, MainActivity.class ));
                 }
-                else Log.d("create1", "nem kell else");
+                else {
+                    Log.d("create1", "nem kell else");
+                    Toast.makeText(CreateActivity.this, "Complete the Question field!", Toast.LENGTH_SHORT).show();
 
-
+                }
             }
 
 

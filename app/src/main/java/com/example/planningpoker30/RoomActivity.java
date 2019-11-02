@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -72,6 +73,7 @@ public class RoomActivity extends AppCompatActivity {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
                 myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("1");
+                Toast.makeText(RoomActivity.this, "User Voted 1", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RoomActivity.this, MainActivity.class ));
             }
         });
@@ -81,6 +83,7 @@ public class RoomActivity extends AppCompatActivity {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
                 myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("2");
+                Toast.makeText(RoomActivity.this, "User Voted 2", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RoomActivity.this, MainActivity.class ));
             }
         });
@@ -90,6 +93,7 @@ public class RoomActivity extends AppCompatActivity {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
                 myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("3");
+                Toast.makeText(RoomActivity.this, "User Voted 3", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RoomActivity.this, MainActivity.class ));
             }
         });
@@ -99,6 +103,7 @@ public class RoomActivity extends AppCompatActivity {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
                 myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("4");
+                Toast.makeText(RoomActivity.this, "User Voted 4", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RoomActivity.this, MainActivity.class ));
             }
         });
@@ -108,6 +113,7 @@ public class RoomActivity extends AppCompatActivity {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
                 myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("5");
+                Toast.makeText(RoomActivity.this, "User Voted 5", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RoomActivity.this, MainActivity.class ));
             }
         });
@@ -149,6 +155,7 @@ public class RoomActivity extends AppCompatActivity {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
                 myRef.child("session").child(newUser.getSessionId()).child("Users").child(newUser.getUserName()).setValue("No Voted");
+                Toast.makeText(RoomActivity.this, "User No Voted", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RoomActivity.this, MainActivity.class ));
             }
         });
