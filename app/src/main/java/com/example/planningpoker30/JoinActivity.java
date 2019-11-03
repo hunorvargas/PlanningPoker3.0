@@ -63,6 +63,7 @@ public class JoinActivity extends AppCompatActivity {
                         }
                         else {
                             Log.d("create", "Hiba:");
+                            //Ide kell egy WrongUsername or SessionID toast
                         }
                     }
                 }, 2000);
@@ -102,8 +103,9 @@ public class JoinActivity extends AppCompatActivity {
             Log.d("create", "Whiile Username: "+Users.get(i));
             if(Users.get(i).equals(getUsernamesesion())){
                 Log.d("create", "kell username egyenlo");
-                Toast.makeText(JoinActivity.this,"This UserName is busy!", Toast.LENGTH_LONG).show();
+               // Toast.makeText(JoinActivity.this,"This UserName is busy!", Toast.LENGTH_LONG).show();
                 return false;
+
             }
             i++;
         }
@@ -125,7 +127,7 @@ public class JoinActivity extends AppCompatActivity {
             }
             i++;
         }
-        Toast.makeText(JoinActivity.this,"This Session is not available!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(JoinActivity.this,"This Session is not available!", Toast.LENGTH_LONG).show();
         Log.d("create", "kell session nincs");
         return false;
     }
