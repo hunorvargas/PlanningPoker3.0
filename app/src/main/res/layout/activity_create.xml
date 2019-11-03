@@ -16,7 +16,7 @@
         android:text="Create a session"
         android:textColor="@color/colorPrimary"
         android:textSize="40dp"
-        android:textStyle="italic"
+        android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"

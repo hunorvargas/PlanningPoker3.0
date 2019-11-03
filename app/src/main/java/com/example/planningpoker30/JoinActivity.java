@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +26,7 @@ import java.util.concurrent.CountDownLatch;
 public class JoinActivity extends AppCompatActivity {
     EditText editUsername,editSessID;
     Button btnJoin;
+    TextView errorText;
     private String sessionid="";
     private String usernamesesion="";
     final ArrayList<String> sessionIDs = new ArrayList<>();
@@ -46,6 +48,7 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final Intent intent = new Intent(JoinActivity.this,RoomActivity.class);
+                errorText.setText(" ");
                 intent.putExtra("Username",editUsername.getText().toString().trim());
                 intent.putExtra("SessionId",editSessID.getText().toString().trim());
                 setSessionid(editSessID.getText().toString().trim());
@@ -62,6 +65,8 @@ public class JoinActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                         else {
+
+                           // Toast.makeText(JoinActivity.this,"Error!", Toast.LENGTH_LONG).show();
                             Log.d("create", "Hiba:");
                             //Ide kell egy WrongUsername or SessionID toast
                         }
@@ -75,6 +80,7 @@ public class JoinActivity extends AppCompatActivity {
         editUsername = findViewById(R.id.editUsername);
         editSessID =  findViewById(R.id.editSessID);
         btnJoin = findViewById(R.id.btnJoin);
+        errorText=findViewById(R.id.errorTextView);
         getsessionids();
 
     }
@@ -82,8 +88,8 @@ public class JoinActivity extends AppCompatActivity {
    private boolean isCompletdata(){
        if (editUsername.getText().toString().isEmpty() && editSessID.getText().toString().isEmpty()){
 
-           Toast.makeText(JoinActivity.this,"Missing UserName or SessionID!", Toast.LENGTH_SHORT).show();
-
+          // Toast.makeText(JoinActivity.this,"Missing UserName or SessionID!", Toast.LENGTH_SHORT).show();
+            errorText.setText("Missing UserName or SessionID!");
 
        }
        else {
@@ -103,7 +109,7 @@ public class JoinActivity extends AppCompatActivity {
             Log.d("create", "Whiile Username: "+Users.get(i));
             if(Users.get(i).equals(getUsernamesesion())){
                 Log.d("create", "kell username egyenlo");
-               // Toast.makeText(JoinActivity.this,"This UserName is busy!", Toast.LENGTH_LONG).show();
+                errorText.setText("This UserName is busy!");
                 return false;
 
             }
@@ -127,6 +133,7 @@ public class JoinActivity extends AppCompatActivity {
             }
             i++;
         }
+        errorText.setText("This Session is not available!");
         //Toast.makeText(JoinActivity.this,"This Session is not available!", Toast.LENGTH_LONG).show();
         Log.d("create", "kell session nincs");
         return false;
