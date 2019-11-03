@@ -6,23 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,10 +27,8 @@ public class JoinActivity extends AppCompatActivity {
     Button btnJoin;
     private String sessionid="";
     private String usernamesesion="";
-    public int counter;
     final ArrayList<String> sessionIDs = new ArrayList<>();
     final ArrayList<String> Users = new ArrayList<>();
-    ProgressBar p;
 
 
     @Override
@@ -53,56 +45,27 @@ public class JoinActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(JoinActivity.this,RoomActivity.class);
+                final Intent intent = new Intent(JoinActivity.this,RoomActivity.class);
                 intent.putExtra("Username",editUsername.getText().toString().trim());
                 intent.putExtra("SessionId",editSessID.getText().toString().trim());
                 setSessionid(editSessID.getText().toString().trim());
                 setUsernamesesion(editUsername.getText().toString().trim());
 
-                new Thread(new Runnable(){
-                    public void run() {
-                        // a potentially time consuming task
-                        Log.d("create", "Users");
-                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-                        Log.d("create", "Users ID:"+getSessionid());
-                        DatabaseReference  myRef = database.getReference().child("session").child(getSessionid()).child("Users");
-
-                        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.getKey()!=null) {
-                                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
-                                        String classnames = datas.getKey();
-                                        Users.add(classnames);
-                                        Log.d("create", "Users " + classnames);
-                                    }
-                                    Log.d("create", "Null");
-                                }
-
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                }).start();
-               final Timer timer = new Timer();
-                timer.schedule(new TimerTask(){
-                    public void run() {
-                        // time ran out.
-                        timer.cancel();
-                    }
-                }, 5000);
+                getsessionUsernames();
 
                 Log.d("create", "kell join:"+editSessID.getText().toString().trim());
-                if(isCompletdata())
-                startActivity(intent);
-                else {
 
-                }
-
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(isCompletdata()){
+                            startActivity(intent);
+                        }
+                        else {
+                            Log.d("create", "Hiba:");
+                        }
+                    }
+                }, 2000);
             }
         });
     }
@@ -123,34 +86,30 @@ public class JoinActivity extends AppCompatActivity {
 
        }
        else {
-           if(isagoodSessionID()) {
+           if(isagoodSessionID() && isagoodusername()) {
                Log.d("create", "kell sessionID jo");
-               if(isagoodusername()){
-                   Log.d("create", "kell username jo");
                    return true;
                }
            }
-        return false;
-       }
-       Log.d("create", "kell nem komplett isagoodsession");
-       return true;
+       return  false;
    }
 
     private boolean isagoodusername() {
         Log.d("create", "kell isagoodusername");
-
+        Log.d("create", "Users Size: " + Users.size());
         int i = 0;
         while (i < Users.size()) {
-            Log.d("create", "Whiile ID"+Users.get(i));
+            Log.d("create", "Whiile Username: "+Users.get(i));
             if(Users.get(i).equals(getUsernamesesion())){
                 Log.d("create", "kell username egyenlo");
-                return true;
+                Toast.makeText(JoinActivity.this,"This UserName is busy!", Toast.LENGTH_LONG).show();
+                return false;
             }
             i++;
         }
-        Toast.makeText(JoinActivity.this,"This UserName is busy!", Toast.LENGTH_LONG).show();
-        Log.d("create", "kell foglalt username");
-        return false;
+
+        Log.d("create", "jo az username");
+        return true;
     }
 
     private boolean isagoodSessionID() {
@@ -228,6 +187,7 @@ public class JoinActivity extends AppCompatActivity {
             }
         }));
     }
+
     public void getsessionUsernames(){
         Log.d("create", "Users");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -238,15 +198,12 @@ public class JoinActivity extends AppCompatActivity {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getKey()!=null) {
-                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
-                        String classnames = datas.getKey();
-                        Users.add(classnames);
-                        Log.d("create", "Users " + classnames);
-                    }
-                    Log.d("create", "Null");
+                Log.d("create", "UsersName Snap");
+                for(DataSnapshot datas: dataSnapshot.getChildren()){
+                    String classnames=datas.getKey();
+                    Users.add(classnames);
+                    Log.d("create", "UsersName: " + classnames);
                 }
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -256,6 +213,6 @@ public class JoinActivity extends AppCompatActivity {
 
     }
 
-
-
 }
+
+
