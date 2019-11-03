@@ -25,6 +25,7 @@ public class HistoryActivity extends AppCompatActivity {
     final ArrayList<User> users = new ArrayList<>();
     final ArrayList<Question> questions = new ArrayList<>();
     final ArrayList<String> sessionIDs = new ArrayList<>();
+    final ArrayList<Session> sessions= new ArrayList<>();
 
 
     @Override
@@ -121,6 +122,7 @@ public class HistoryActivity extends AppCompatActivity {
         while (i < sessionIDs.size()) {
             Log.d("create", "While SessionIDs: ");
             sessionIDs.get(i);
+            sessions.add(session);
             readfirebase(sessionIDs.get(i));
             }
             i++;
@@ -184,6 +186,7 @@ public class HistoryActivity extends AppCompatActivity {
                         Log.i("create","User: "+ newUser.getUserName());
                         newUser.setUserVote(String.valueOf(child.getValue()));
                         Log.i("create","UserVote: "+child.child("questionDescription").getValue().toString());
+                        users.add(newUser);
                     }
 
                 }
@@ -204,6 +207,10 @@ public class HistoryActivity extends AppCompatActivity {
 
             }
         });
+
+        session.setSessionID(sessid);
+        session.setQuestion(question);
+        session.setUsers(users);
     }
 
     private void getsessionids(){
