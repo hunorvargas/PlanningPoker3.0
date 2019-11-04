@@ -43,9 +43,9 @@ public class HistoryActivity extends AppCompatActivity {
         init();
 
 
-        getAllData();
+       // getAllData();
 
-        //getSessionData();
+        getSessionData();
 
 
 
@@ -66,24 +66,53 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void getSessionData() {
 
-        getSessionQuestion();
-        getSessionQuestionDesc();
-        getSessionUsers();
-        session.setUsers(users);
-        session.setSessionID(sessionid);
-        session.setQuestion(question);
+        Log.d("create", "getSessionDataStartwihile");
+        getsessionids();
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                int i = 0;
+                Log.d("create", "getSessionID size: "+sessionIDs.size());
+                while (i < sessionIDs.size()) {
+                    Log.d("create", "While SessionIDs: ");
+                    sessionIDs.get(i);
+                    setSessionid(sessionIDs.get(i));
+                    Log.d("create", "getSessionIDS finish");
+                    Log.d("create", "getSessionData start.");
+                    getSessionQuestion();
+                    Log.d("create", "getSessionData question.");
+                    getSessionQuestionDesc();
+                    Log.d("create", "getSessionData questiondesc.");
+                    getSessionUsers();
+                    Log.d("create", "getSessionData users.");
+                    session.setUsers(users);
+                    session.setSessionID(sessionid);
+                    session.setQuestion(question);
+                    sessions.add(session);
+                    i++;
+                }
+
+            }
+        }, 2000);
+
+
     }
 
-    private void getSessionQuestionDesc() {
+    private void getSessionQuestion() {
+        Log.d("create", "QuestionDescStart: ");
+        Log.d("create", "QuestionDesc ID: "+getSessionid());
 
-        DatabaseReference myRef = database.getReference("session").
-                child(newUser.getSessionId()).child("Questions").child("QuestionDesc");
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("session").child(getSessionid()).child("Questions").child("Question");
 
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                question.setQuestionDesc(dataSnapshot.getValue().toString());
+                Log.d("create", "Question snaphot" + dataSnapshot.getValue().toString());
+                question.setQuestion(dataSnapshot.getValue().toString());
+                Log.d("create", "Question: " + question.getQuestion());
             }
 
             @Override
@@ -119,16 +148,19 @@ public class HistoryActivity extends AppCompatActivity {
         });
     }
 
-    private void getSessionQuestion() {
+    private void getSessionQuestionDesc() {
 
-
-        DatabaseReference myRef = database.getReference("session").child(newUser.getSessionId()).child("Questions").child("Question");
+        Log.d("create", "getSessionQuestionDesc");
+        Log.d("create", "getSessionQuestionDesc ID:"+getSessionid());
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("session").child(getSessionid()).child("Questions").child("QuestionDesc");
 
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                question.setQuestion(dataSnapshot.getValue().toString());
+                question.setQuestionDesc(dataSnapshot.getValue().toString());
+                Log.d("create", "Question: " + question.getQuestionDesc());
             }
 
             @Override
@@ -151,7 +183,7 @@ public class HistoryActivity extends AppCompatActivity {
                 while (i < sessionIDs.size()) {
                     Log.d("create", "While SessionIDs: ");
                     sessionIDs.get(i);
-                    readfirebase(sessionIDs.get(i));
+                    setSessionid(sessionIDs.get(i));
                     sessions.add(session);
                     i++;
                 }
@@ -163,10 +195,12 @@ public class HistoryActivity extends AppCompatActivity {
 
     }
 
-    private void readfirebase(String sessid) {
-        Log.d("create", "readfirebasestart: ");
+  /*  private void readfirebase(String sessid) {
+        Log.d("create", "readfirebasestart: " +sessid);
         DatabaseReference  myRef = database.getReference(sessid);
+
         myRef.addChildEventListener(new ChildEventListener() {
+
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
              String key = dataSnapshot.getKey();
@@ -245,7 +279,7 @@ public class HistoryActivity extends AppCompatActivity {
         session.setSessionID(sessid);
         session.setQuestion(question);
         session.setUsers(users);
-    }
+    }*/
 
     private void getsessionids(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
