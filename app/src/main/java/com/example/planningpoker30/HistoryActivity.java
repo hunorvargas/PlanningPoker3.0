@@ -43,8 +43,6 @@ public class HistoryActivity extends AppCompatActivity {
         init();
 
 
-       // getAllData();
-
         getSessionData();
 
 
@@ -169,117 +167,6 @@ public class HistoryActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void getAllData() {
-
-        Log.d("create", "getAllDataStart");
-        getsessionids();
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                int i = 0;
-                Log.d("create", "getSessionID size: "+sessionIDs.size());
-                while (i < sessionIDs.size()) {
-                    Log.d("create", "While SessionIDs: ");
-                    sessionIDs.get(i);
-                    setSessionid(sessionIDs.get(i));
-                    sessions.add(session);
-                    i++;
-                }
-
-            }
-        }, 2000);
-
-        Log.d("create", "getSessionIDS finish");
-
-    }
-
-  /*  private void readfirebase(String sessid) {
-        Log.d("create", "readfirebasestart: " +sessid);
-        DatabaseReference  myRef = database.getReference(sessid);
-
-        myRef.addChildEventListener(new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-             String key = dataSnapshot.getKey();
-                Log.i("create","readfirebase "+dataSnapshot.getKey());
-                if (key.equals("Question"))
-                {
-                    question.setQuestion(dataSnapshot.getValue().toString());
-                    Log.i("create","Question: "+dataSnapshot.getValue());
-                }
-
-                if (key.equals("QuestionDesc"))
-                {
-                    question.setQuestionDesc(dataSnapshot.getValue().toString());
-                    Log.i("create","QuestionDesc: "+dataSnapshot.getValue());
-                }
-
-                if (key.equals("Users"))
-                {
-                    for (DataSnapshot child: dataSnapshot.getChildren())
-                {
-                    newUser.setUserName(child.getKey());
-                    Log.i("create","User: "+ newUser.getUserName());
-                    newUser.setUserVote(String.valueOf(child.getValue()));
-                    Log.i("create","UserVote: "+child.child("questionDescription").getValue().toString());
-                }
-
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String key = dataSnapshot.getKey();
-                Log.i("create","readfirebase "+dataSnapshot.getKey());
-                if (key.equals("Question"))
-                {
-                    question.setQuestion(dataSnapshot.getValue().toString());
-                    Log.i("create","Question: "+dataSnapshot.getValue());
-                }
-
-                if (key.equals("QuestionDesc"))
-                {
-                    question.setQuestionDesc(dataSnapshot.getValue().toString());
-                    Log.i("create","QuestionDesc: "+dataSnapshot.getValue());
-                }
-
-                if (key.equals("Users"))
-                {
-                    for (DataSnapshot child: dataSnapshot.getChildren())
-                    {
-                        newUser.setUserName(child.getKey());
-                        Log.i("create","User: "+ newUser.getUserName());
-                        newUser.setUserVote(String.valueOf(child.getValue()));
-                        Log.i("create","UserVote: "+child.child("questionDescription").getValue().toString());
-                        users.add(newUser);
-                    }
-
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        Log.d("create", "data: " + session.getSessionID()+ " " + session.getQuestion()+ " "+session.getUsers());
-        session.setSessionID(sessid);
-        session.setQuestion(question);
-        session.setUsers(users);
-    }*/
 
     private void getsessionids(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
