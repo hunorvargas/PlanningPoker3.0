@@ -9,8 +9,8 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Intent intentCreate, intentJoin;
-    private Button btnCreate, btnJoin;
+    private Intent intentCreate, intentJoin, intentHistory;
+    private Button btnCreate, btnJoin, btnHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         intentCreate = new Intent(MainActivity.this, CreateActivity.class);
         intentJoin = new Intent(MainActivity.this, JoinActivity.class);
+        intentHistory=new Intent(MainActivity.this, HistoryActivity.class);
 
         btnCreate = (Button) findViewById(R.id.btnCreate);
         btnCreate.setOnClickListener(this);
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnJoin = (Button) findViewById(R.id.btnJoin);
         btnJoin.setOnClickListener(this);
 
+        btnHistory=(Button) findViewById(R.id.btnHistory);
+        btnHistory.setOnClickListener(this);
     }
 
     @Override
@@ -40,6 +43,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == btnJoin){
 
             startActivity(intentJoin);
+
+        }
+
+        if (v == btnHistory){
+
+            startActivity(intentHistory);
 
         }
 

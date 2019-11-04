@@ -3,6 +3,9 @@ package com.example.planningpoker30;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import android.os.Handler;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +29,8 @@ public class HistoryActivity extends AppCompatActivity {
     final ArrayList<Question> questions = new ArrayList<>();
     final ArrayList<String> sessionIDs = new ArrayList<>();
     final ArrayList<Session> sessions= new ArrayList<>();
+    final Handler handler = new Handler();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
 
     @Override
@@ -35,7 +40,13 @@ public class HistoryActivity extends AppCompatActivity {
         init();
         getAllData();
         getSessionData();
-        
+
+        RecyclerView rvSessions=(RecyclerView) findViewById(R.id.rvSessions);
+
+        SessionsAdapter adapter=new SessionsAdapter(sessions);
+
+        rvSessions.setAdapter(adapter);
+        rvSessions.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void init() {
@@ -54,7 +65,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void getSessionQuestionDesc() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("session").child(newUser.getSessionId()).child("Questions").child("QuestionDesc");
 
 
@@ -73,7 +84,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void getSessionUsers() {
         Log.d("create", "Users");
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         Log.d("create", "Users ID:"+getSessionid());
         DatabaseReference  myRef = database.getReference().child("session").child(getSessionid()).child("Users");
@@ -99,7 +110,8 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void getSessionQuestion() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+
         DatabaseReference myRef = database.getReference("session").child(newUser.getSessionId()).child("Questions").child("Question");
 
 
@@ -130,7 +142,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void readfirebase(String sessid) {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference  myRef = database.getReference(sessid);
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -214,7 +226,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void getsessionids(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference  myRef = database.getReference();
 
         myRef.addChildEventListener((new ChildEventListener() {
@@ -226,6 +238,7 @@ public class HistoryActivity extends AppCompatActivity {
                 for (DataSnapshot child: dataSnapshot.getChildren())
                 {
                     String key = child.getKey().toString();
+
                     sessionIDs.add(key);
                     Log.d("create", "creatID:"+ key);
                 }
@@ -259,4 +272,5 @@ public class HistoryActivity extends AppCompatActivity {
     public void setSessionid(String sessionid) {
         this.sessionid = sessionid;
     }
+
 }

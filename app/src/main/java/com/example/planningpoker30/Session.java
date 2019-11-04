@@ -40,4 +40,15 @@ public class Session {
                 ", users=" + users +
                 '}';
     }
+
+    /*public static ArrayList<Session> createSessionsList(int numOfSessions) {
+        ArrayList<Session> Sessions = new ArrayList<Session>();
+
+        for (int i = 1; i <= numOfSessions; i++) {
+            Sessions.add(new Session());
+        }
+
+        return Sessions;
+    }*/
+
 }
