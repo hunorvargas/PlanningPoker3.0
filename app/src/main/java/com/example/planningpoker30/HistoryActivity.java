@@ -18,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -31,6 +33,7 @@ public class HistoryActivity extends AppCompatActivity {
     final ArrayList<Session> sessions= new ArrayList<>();
     final Handler handler = new Handler();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
+    RecyclerView sessionReycler;
 
 
     @Override
@@ -38,24 +41,31 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         init();
-        getAllData();
-        getSessionData();
 
-        RecyclerView rvSessions=(RecyclerView) findViewById(R.id.rvSessions);
+
+        getAllData();
+
+        //getSessionData();
+
+
 
         SessionsAdapter adapter=new SessionsAdapter(sessions);
 
-        rvSessions.setAdapter(adapter);
-        rvSessions.setLayoutManager(new LinearLayoutManager(this));
+        sessionReycler.setAdapter(adapter);
+        sessionReycler.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void init() {
+        Log.d("create", "Initstart");
         newUser=new User();
         question=new Question();
         session=new Session();
+        sessionReycler=findViewById(R.id.rvSessions);
+        Log.d("create", "initFinish");
     }
 
     private void getSessionData() {
+
         getSessionQuestion();
         getSessionQuestionDesc();
         getSessionUsers();
@@ -65,8 +75,9 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void getSessionQuestionDesc() {
-        //FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("session").child(newUser.getSessionId()).child("Questions").child("QuestionDesc");
+
+        DatabaseReference myRef = database.getReference("session").
+                child(newUser.getSessionId()).child("Questions").child("QuestionDesc");
 
 
         myRef.addValueEventListener(new ValueEventListener() {
@@ -84,7 +95,6 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void getSessionUsers() {
         Log.d("create", "Users");
-        //FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         Log.d("create", "Users ID:"+getSessionid());
         DatabaseReference  myRef = database.getReference().child("session").child(getSessionid()).child("Users");
@@ -129,20 +139,32 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void getAllData() {
+
+        Log.d("create", "getAllDataStart");
         getsessionids();
-        int i = 0;
-        while (i < sessionIDs.size()) {
-            Log.d("create", "While SessionIDs: ");
-            sessionIDs.get(i);
-            sessions.add(session);
-            readfirebase(sessionIDs.get(i));
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                int i = 0;
+                Log.d("create", "getSessionID size: "+sessionIDs.size());
+                while (i < sessionIDs.size()) {
+                    Log.d("create", "While SessionIDs: ");
+                    sessionIDs.get(i);
+                    readfirebase(sessionIDs.get(i));
+                    sessions.add(session);
+                    i++;
+                }
+
             }
-            i++;
+        }, 2000);
+
+        Log.d("create", "getSessionIDS finish");
+
     }
 
     private void readfirebase(String sessid) {
-
-        //FirebaseDatabase database = FirebaseDatabase.getInstance();
+        Log.d("create", "readfirebasestart: ");
         DatabaseReference  myRef = database.getReference(sessid);
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -219,14 +241,14 @@ public class HistoryActivity extends AppCompatActivity {
 
             }
         });
-
+        Log.d("create", "data: " + session.getSessionID()+ " " + session.getQuestion()+ " "+session.getUsers());
         session.setSessionID(sessid);
         session.setQuestion(question);
         session.setUsers(users);
     }
 
     private void getsessionids(){
-        //FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference  myRef = database.getReference();
 
         myRef.addChildEventListener((new ChildEventListener() {
